@@ -11,7 +11,7 @@ CMSC 125 ST-2L AY 14-15
 // includes
 #include "../../sdk/dexsdk.h"
 #include "gameOperations.h"
-//#include "GameLogic.h"
+#include "GameLogic.h"
 
 // constants
 #define start '1'
@@ -25,13 +25,13 @@ int main ()
 {
 	char keypress = start, game_continue = still_continue, movement;
 	set_graphics (VGA_320X200X256); // set screen with 320 x 200 with 256 colors
+	int board[8][8], visible[8][8], adjacents[8][8];
 
 	// on game start
 	do
 	{
 		show_main (); // show main menu
 		keypress = (char) getch (); // get input
-
 		// if start
 		if (keypress == start)
 		{
@@ -40,6 +40,7 @@ int main ()
 			do
 			{
 				game_continue = (char) getch (); // get input
+				move (game_continue);
 			}
 			while (game_continue != quit_key);
 		}

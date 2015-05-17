@@ -17,7 +17,6 @@ int board[8][8];
 int adjacents[8][8];
 int visible[8][8]; //0 - invisible, 1 - visible, 2 - has flag
 int minesCount = 0, i = 0, j = 0;
-int position[2];
 
 void newGame();
 void markFlag(int x, int y);
@@ -26,7 +25,7 @@ void print_textboard ();
 void uncover (int x, int y);
 int checkWon();
 
-void newGame(){
+void newGame(int** board, int** adjacents){
 	
 	//fill board with mines
 	minesCount = rand()/5000 + 10;
