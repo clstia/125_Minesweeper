@@ -1,18 +1,15 @@
 /*
-gameOperations.h
-contains basic game ui operations for mnspwr.c
+GameInterface.h
+Contains the UI Operations for Minesweeper
 
 Eurolfan, Jan Ellis D. 10-29160
 Tecson, Christan Dan P. 10-53508
 CMSC 125 ST-2L AY 14-15
-
-Coded mainly by Eurolfan
 */
 
 #include "../../sdk/dexsdk.h"
-#include "../../sdk/time.h"
 
-// colors
+// Since the enum from dexsdk.h doesn't come out as expected, the int values are needed. Lifted from lights.c by Ibay, JP (07-67611) and De La Vina, A. (07-67724)
 #define WHITE 63
 #define GRAY 56
 #define YELLOW 54
@@ -23,30 +20,27 @@ Coded mainly by Eurolfan
 #define left_key 'a'
 #define right_key 'd'
 #define flip_key 'o'
+#define reset_key 'r'
 
 // function prototypes
 void show_board ();
 void show_main ();
 void erase ();
 void print_board ();
-
-// controls
-void keypress_up ();
-void keypress_down ();
-void keypress_left ();
-void keypress_right ();
-void keypress_reset ();
-void keypress_flip ();
+void print_tile (int x, int y);
+void print_inner_tile (int x, int y);
+void select_tile (int x, int y);
+void reset ();
+void flip (int x, int y, int value);
+void move_on_board (char keypress, int value);
 
 // global variables
-int new_x, new_y, old_x, old_y;
+int new_x, new_y, old_x = 100, old_y = 0, limit_left = 100, limit_upper = 0, limit_lower = 154, limit_right = 275;
 
 // shows the whole playing field
 void show_board ()
 {
-	int i, j, a;
-
-	// show initial board
+	// set initial board
 	print_board ();
 
 	// show commands
@@ -57,35 +51,61 @@ void show_board ()
 	write_text ("Reset - R", 5, 77, WHITE, 0);
 	write_text ("Exit - X", 5, 87, WHITE, 0);
 	write_text ("Flip - O", 5, 107, WHITE, 0);
+
 }
 
-/*
-working colors from dexsdk
-LIGHTBLUE
-BLUE
-GREEN
-CYAN
-RED
-MAGENTA
-LIGHTGRAY
-LIGHTGREEN
-LIGHTCYAN / BRIGHT NA BLUE
-LIGHTRED / MAROON
-LIGHTMAGENTA / BRIGHTPURPLE
-BROWN / LIGHT NA BROWN
-YELLOW / USE LIGHTS.C YELLOW
-WHITE / USE LIGHTS.C WHITE
-*/
+// opens a tile.
+void flip (int x, int y, int value)
+{
+	int i, j;
 
+	if (value)
+	{
+		for (i = x+2; i <= (x+18); i++)
+			for (j = 12+y; j <= (y+23); j++)
+				write_pixel (i, j, RED);	
+	}
+	else
+	{
+		for (i = x+2; i <= (x+18); i++)
+			for (j = 12+y; j <= (y+23); j++)
+				write_pixel (i, j, YELLOW);	
+	}
+}
+
+// colors currently selected tile
+void select_tile (int x, int y)
+{
+	int i, j;
+	for (i = x+2; i <= (x+18); i++)
+		for (j = 12+y; j <= (y+23); j++)
+			write_pixel (i, j, LIGHTRED);
+}
+
+// colors the inner part of the tile
+void print_inner_tile (int x, int y)
+{
+	int i, j;
+	// inner tile
+	for (i = x+2; i <= (x+18); i++)
+		for (j = 12+y; j <= (y+23); j++)
+			write_pixel (i, j, LIGHTCYAN);
+}
+
+// prints an array of 8x8 tiles
 void print_tile (int x, int y)
 {
 	int i, j;
 
+	// base tile
 	for (i = x; i <= (x+20); i++)
 		for (j = 10+y; j <= (y+25); j++)
 			write_pixel (i, j, WHITE);
+
+	print_inner_tile (x, y);
 }
 
+// prints the board along with the background
 void print_board ()
 {
 	int i, j, a;
@@ -95,29 +115,13 @@ void print_board ()
 		for (j = 0; j < 200; j++) 
 			write_pixel (i, j, LIGHTGREEN);
 
-	// alternate print
+	// prints the 8x8 matrix
 	for (i = 100; i <= 275; i += 25)
 		for (j = 0; j < 176; j += 22)
 			print_tile (i, j);
-	// initial print
-	/*	
-	// print the tiles of the game
-	for (a = 0; a < 160; a += 20)
-	{
-		if (a > 0)
-		{
-			a += 2;
-		}
 
-		for (i = 100; i <= 120; i++) for (j = 10 + a; j <= 25 + a; j++) write_pixel (i, j, WHITE);		
-		for (i = 125; i <= 145; i++) for (j = 10 + a; j <= 25 + a; j++) write_pixel (i, j, WHITE);
-		for (i = 150; i <= 170; i++) for (j = 10 + a; j <= 25 + a; j++) write_pixel (i, j, WHITE);
-		for (i = 175; i <= 195; i++) for (j = 10 + a; j <= 25 + a; j++) write_pixel (i, j, WHITE);
-		for (i = 200; i <= 220; i++) for (j = 10 + a; j <= 25 + a; j++) write_pixel (i, j, WHITE);
-		for (i = 225; i <= 245; i++) for (j = 10 + a; j <= 25 + a; j++) write_pixel (i, j, WHITE);
-		for (i = 250; i <= 270; i++) for (j = 10 + a; j <= 25 + a; j++) write_pixel (i, j, WHITE);
-		for (i = 275; i <= 295; i++) for (j = 10 + a; j <= 25 + a; j++) write_pixel (i, j, WHITE);
-	}*/
+	// set 1st tile as selected	
+	select_tile (old_x, old_y);
 }
 
 // shows the main menu
@@ -135,10 +139,83 @@ void erase ()
 	int i, j;
 
 	for (i = 1; i <= (221); i++)
-	{
 		for (j = 1; j <= (401); j++)
-		{
 			write_pixel (j, i, 100);
-		}
+}
+
+// shows the current position of the marker
+void move_on_board (char keypress, int value)
+{
+	switch (keypress)
+	{
+		case up_key:
+			new_y = old_y - 22;
+
+			if (new_y < limit_upper)
+			{
+				select_tile (old_x, limit_upper);
+			}
+			else
+			{
+				print_inner_tile (old_x, old_y);
+				select_tile (old_x, new_y);
+				old_y = new_y;
+			}
+
+		break;
+
+		case down_key:
+			new_y = old_y + 22;
+
+			if (new_y > limit_lower)
+			{
+				select_tile (old_x, limit_lower);
+			}
+			else
+			{
+				print_inner_tile (old_x, old_y);
+				select_tile (old_x, new_y);
+				old_y = new_y;
+			}
+
+		break;
+
+		case left_key:
+			new_x = old_x - 25;
+
+			if (new_x < limit_left)
+			{
+				select_tile (limit_left, old_y);
+			}
+			else
+			{
+				print_inner_tile (old_x, old_y);
+				select_tile (new_x, old_y);
+				old_x = new_x;
+			}
+		break;
+
+		case right_key:
+			new_x = old_x + 25;
+
+			if (new_x > limit_right)
+			{
+				select_tile (limit_right, old_y);
+			}
+			else
+			{
+				print_inner_tile (old_x, old_y);
+				select_tile (new_x, old_y);
+				old_x = new_x;
+			}
+		break;
+
+		case flip_key:
+			
+		break;
+
+		case reset_key:
+
+		break;
 	}
 }

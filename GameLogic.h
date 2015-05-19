@@ -9,24 +9,26 @@ CMSC 125 ST-2L AY 14-15
 Coded mainly by Tecson
 */
 
-#include "../../sdk/tccsdk.h"
+#include "../../sdk/dexsdk.h"
+
 #define TRUE 1
 #define FALSE 0
 
-int board[8][8];
-int adjacents[8][8];
-int visible[8][8]; //0 - invisible, 1 - visible, 2 - has flag
-int minesCount = 0, i = 0, j = 0;
-int position[2];
+//int board[8][8]
+//int adjacents[8][8];
+//int visible[8][8]; //0 - invisible, 1 - visible, 2 - has flag
+//int minesCount = 0, i = 0, j = 0;
 
-void newGame();
-void markFlag(int x, int y);
-void click(int x, int y);
+int i, j;
+
+void newGame(int board[8][8], int adjacents[8][8], int minesCount);
+void markFlag(int x, int y, int visible[8][8]);
+void click(int x, int y, int board[8][8], int visible[8][8]);
 void print_textboard ();
-void uncover (int x, int y);
-int checkWon();
+void uncover (int x, int y, int board[8][8], int visible[8][8]);
+int checkWon(int board[8][8], int visible[8][8]);
 
-void newGame(){
+void newGame(int board[8][8], int adjacents[8][8], int minesCount){
 	
 	//fill board with mines
 	minesCount = rand()/5000 + 10;
@@ -86,22 +88,22 @@ void newGame(){
 	}
 }
 
-void markFlag(int x, int y){
+void markFlag(int x, int y, int visible[8][8]){
 	if(visible[x][y] == 0)
 		visible[x][y] == 2;
 	if(visible[x][y] == 2)
 		visible[x][y] == 0;
 }
 
-void click(int x, int y){
+void click(int x, int y, int board[8][8], int visible[8][8]){
 	if(board[x][y]){
 		//insert game over code here
 		return;
 	}
-	uncover(x, y);
+	uncover(x, y, board, visible);
 }
 
-void uncover(int x, int y){
+void uncover(int x, int y, int board[8][8], int visible[8][8]){
 	if(board[x][y]){
 		return;
 	}
@@ -109,32 +111,32 @@ void uncover(int x, int y){
 	
 	//uncover left
 	if(x - 1 > 0 && !board[x-1][y])
-		uncover(x - 1, y);
+		uncover(x - 1, y, board, visible);
 	//uncover right
 	if(x + 1 < 8 && !board[x+1][y])
-		uncover(x + 1, y);
+		uncover(x + 1, y, board, visible);
 	//uncover up
 	if(y + 1 < 8 && !board[x][y+1])
-		uncover(x, y + 1);
+		uncover(x, y + 1, board, visible);
 	//uncover down
 	if(y - 1 > 0 && !board[x][y-1])
-		uncover(x, y - 1);
+		uncover(x, y - 1, board, visible);
 		
 	//uncover lower left
 	if(y - 1 > 0 && x - 1 > 0 && !board[x - 1][y-1])
-		uncover(x - 1, y - 1);
+		uncover(x - 1, y - 1, board, visible);
 	//uncover lower right
 	if(y - 1 > 0 && x + 1 < 8 && !board[x + 1][y-1])
-		uncover(x + 1, y - 1);
+		uncover(x + 1, y - 1, board, visible);
 	//uncover upper left
 	if(y + 1 < 8 && x - 1 > 0 && !board[x - 1][y+1])
-		uncover(x - 1, y + 1);
+		uncover(x - 1, y + 1, board, visible);
 	//uncover upper right
 	if(y + 1 < 8 && x + 1 < 8 && !board[x + 1][y+1])
-		uncover(x + 1, y + 1);
+		uncover(x + 1, y + 1, board, visible);
 }
 
-int checkWon(){
+int checkWon(int board[8][8], int visible[8][8]){
 	for(i = 0; i < 8; i++){
 		for(j = 0; j < 8; j++){
 			if(visible[i][j] == 0 && !board[i][j])
