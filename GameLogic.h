@@ -21,6 +21,11 @@ Coded mainly by Tecson
 
 int i, j;
 
+/*
+need pass by reference on every array object
+all arrays will be created in main
+*/
+
 void newGame(int board[8][8], int adjacents[8][8], int minesCount);
 void markFlag(int x, int y, int visible[8][8]);
 void click(int x, int y, int board[8][8], int visible[8][8]);
