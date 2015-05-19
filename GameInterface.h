@@ -31,6 +31,7 @@ void select_tile (int x, int y);
 void reset ();
 void flip (int x, int y, int value);
 void move_on_board (char keypress, int value);
+void number_box ();
 
 // global variables
 int new_x, new_y, old_x = 100, old_y = 0, limit_left = 100, limit_upper = 0, limit_lower = 154, limit_right = 275;
@@ -120,6 +121,8 @@ void print_board ()
 
 	// set 1st tile as selected	
 	select_tile (old_x, old_y);
+
+	number_box ();
 }
 
 // shows the main menu
@@ -216,4 +219,13 @@ void move_on_board (char keypress, int value)
 
 		break;
 	}
+}
+
+void number_box ()
+{
+	int i, j;
+	print_tile (20, 120);
+
+	for (i = 10; i <= 30; i++)
+		write_pixel (i, 120, BLACK);
 }
