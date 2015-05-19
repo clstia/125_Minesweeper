@@ -61,6 +61,7 @@ int main ()
 	return 0;
 }
 
+// get value at board[x][y]
 void move_on_array (char keypress)
 {
 	switch (keypress)

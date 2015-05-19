@@ -7,21 +7,26 @@ Tecson, Christan Dan P. 10-53508
 CMSC 125 ST-2L AY 14-15
 */
 
+// boolean constants
 #define TRUE 1
 #define FALSE 0
 
-//int board[8][8]
-//int adjacents[8][8];
-//int visible[8][8]; //0 - invisible, 1 - visible, 2 - has flag
-//int minesCount = 0, i = 0, j = 0;
-
+// global variables
 int i, j;
+
+/*
+for visible array:
+0 - invisible
+1 - visible
+2 - marked with flag
+*/
 
 /*
 need pass by reference on every array object
 all arrays will be created in main
 */
 
+// function prototypes
 void newGame(int board[8][8], int adjacents[8][8], int minesCount);
 void markFlag(int x, int y, int visible[8][8]);
 void click(int x, int y, int board[8][8], int visible[8][8]);
@@ -29,6 +34,7 @@ void print_textboard ();
 void uncover (int x, int y, int board[8][8], int visible[8][8]);
 int checkWon(int board[8][8], int visible[8][8]);
 
+// initializes board
 void newGame(int board[8][8], int adjacents[8][8], int minesCount){
 	
 	//fill board with mines
@@ -89,6 +95,7 @@ void newGame(int board[8][8], int adjacents[8][8], int minesCount){
 	}
 }
 
+// marks an area with a flag. works for invisible units only
 void markFlag(int x, int y, int visible[8][8]){
 	if(visible[x][y] == 0)
 		visible[x][y] == 2;
@@ -96,6 +103,7 @@ void markFlag(int x, int y, int visible[8][8]){
 		visible[x][y] == 0;
 }
 
+// similar to flip in GameInterface
 void click(int x, int y, int board[8][8], int visible[8][8]){
 	if(board[x][y]){
 		//insert game over code here
@@ -104,6 +112,7 @@ void click(int x, int y, int board[8][8], int visible[8][8]){
 	uncover(x, y, board, visible);
 }
 
+// reveals the content of selected tile
 void uncover(int x, int y, int board[8][8], int visible[8][8]){
 	if(board[x][y]){
 		return;
@@ -137,6 +146,7 @@ void uncover(int x, int y, int board[8][8], int visible[8][8]){
 		uncover(x + 1, y + 1, board, visible);
 }
 
+// winning condition
 int checkWon(int board[8][8], int visible[8][8]){
 	for(i = 0; i < 8; i++){
 		for(j = 0; j < 8; j++){
