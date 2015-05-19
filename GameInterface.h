@@ -7,8 +7,6 @@ Tecson, Christan Dan P. 10-53508
 CMSC 125 ST-2L AY 14-15
 */
 
-#include "../../sdk/dexsdk.h"
-
 // Since the enum from dexsdk.h doesn't come out as expected, the int values are needed. Lifted from lights.c by Ibay, JP (07-67611) and De La Vina, A. (07-67724)
 #define WHITE 63
 #define GRAY 56

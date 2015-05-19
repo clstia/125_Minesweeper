@@ -8,7 +8,8 @@ CMSC 125 ST-2L AY 14-15
 */
 
 // includes
-#include "gameOperations.h"
+#include "../../sdk/dexsdk.h"
+#include "GameInterface.h"
 #include "GameLogic.h"
 
 // constants

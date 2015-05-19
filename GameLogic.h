@@ -7,8 +7,6 @@ Tecson, Christan Dan P. 10-53508
 CMSC 125 ST-2L AY 14-15
 */
 
-#include "../../sdk/dexsdk.h"
-
 #define TRUE 1
 #define FALSE 0
 
