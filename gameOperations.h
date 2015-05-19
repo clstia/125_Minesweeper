@@ -31,7 +31,6 @@ void print_board ();
 void print_tile (int x, int y);
 void print_inner_tile (int x, int y);
 void select_tile (int x, int y);
-void move (char keypress);
 void reset ();
 void flip (int x, int y, int value);
 
@@ -71,83 +70,6 @@ void flip (int x, int y, int value)
 		for (i = x+2; i <= (x+18); i++)
 			for (j = 12+y; j <= (y+23); j++)
 				write_pixel (i, j, GREEN);	
-	}
-}
-
-// shows the current position of the marker
-void move (char keypress)
-{
-	switch (keypress)
-	{
-		case up_key:
-			new_y = old_y - 22;
-
-			if (new_y < limit_upper)
-			{
-				select_tile (old_x, limit_upper);
-			}
-			else
-			{
-				print_inner_tile (old_x, old_y);
-				select_tile (old_x, new_y);
-				old_y = new_y;
-			}
-
-		break;
-
-		case down_key:
-			new_y = old_y + 22;
-
-			if (new_y > limit_lower)
-			{
-				select_tile (old_x, limit_lower);
-			}
-			else
-			{
-				print_inner_tile (old_x, old_y);
-				select_tile (old_x, new_y);
-				old_y = new_y;
-			}
-
-		break;
-
-		case left_key:
-			new_x = old_x - 25;
-
-			if (new_x < limit_left)
-			{
-				select_tile (limit_left, old_y);
-			}
-			else
-			{
-				print_inner_tile (old_x, old_y);
-				select_tile (new_x, old_y);
-				old_x = new_x;
-			}
-		break;
-
-		case right_key:
-			new_x = old_x + 25;
-
-			if (new_x > limit_right)
-			{
-				select_tile (limit_right, old_y);
-			}
-			else
-			{
-				print_inner_tile (old_x, old_y);
-				select_tile (new_x, old_y);
-				old_x = new_x;
-			}
-		break;
-
-		case flip_key:
-			flip (old_x, old_y, value);
-		break;
-
-		case reset_key:
-
-		break;
 	}
 }
 

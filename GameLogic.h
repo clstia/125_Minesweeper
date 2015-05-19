@@ -9,7 +9,7 @@ CMSC 125 ST-2L AY 14-15
 Coded mainly by Tecson
 */
 
-#include "../../sdk/tccsdk.h"
+#include "../../sdk/dexsdk.h"
 #define TRUE 1
 #define FALSE 0
 
@@ -25,7 +25,7 @@ void print_textboard ();
 void uncover (int x, int y);
 int checkWon();
 
-void newGame(int** board, int** adjacents){
+void newGame(){
 	
 	//fill board with mines
 	minesCount = rand()/5000 + 10;
