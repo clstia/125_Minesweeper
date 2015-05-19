@@ -5,8 +5,6 @@ contains the logic of the minesweeper game
 Eurolfan, Jan Ellis D. 10-29160
 Tecson, Christan Dan P. 10-53508
 CMSC 125 ST-2L AY 14-15
-
-Coded mainly by Tecson
 */
 
 #include "../../sdk/dexsdk.h"
