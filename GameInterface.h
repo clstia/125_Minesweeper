@@ -24,13 +24,13 @@ CMSC 125 ST-2L AY 14-15
 void show_board ();
 void show_main ();
 void erase ();
-void print_board ();
-void print_tile (int x, int y);
-void print_inner_tile (int x, int y);
+void print_board (int **board, int board_x, int board_y);
+void print_tile (int x, int y, int **board, int board_x, int board_y);
+void print_inner_tile (int x, int y, int **board, int board_x, int board_y);
 void select_tile (int x, int y);
 void reset ();
 void flip (int x, int y, int value);
-void move_on_board (char keypress, int value);
+void move_on_board (char keypress, int value, int **board, int board_x, int board_y);
 void number_box ();
 
 // global variables
@@ -39,9 +39,6 @@ int new_x, new_y, old_x = 100, old_y = 0, limit_left = 100, limit_upper = 0, lim
 // shows the whole playing field
 void show_board ()
 {
-	// set initial board
-	print_board ();
-
 	// show commands
 	write_text ("Up - W", 5, 37, WHITE, 0);
 	write_text ("Down - S", 5, 47, WHITE, 0);
@@ -92,7 +89,7 @@ void print_inner_tile (int x, int y)
 }
 
 // prints an array of 8x8 tiles
-void print_tile (int x, int y)
+void print_tile (int x, int y\)
 {
 	int i, j;
 
@@ -121,8 +118,6 @@ void print_board ()
 
 	// set 1st tile as selected	
 	select_tile (old_x, old_y);
-
-	number_box ();
 }
 
 // shows the main menu
@@ -145,7 +140,7 @@ void erase ()
 }
 
 // shows the current position of the marker
-void move_on_board (char keypress, int value)
+void move_on_board (char keypress, int value, int **board, int board_x, int board_y)
 {
 	switch (keypress)
 	{
@@ -219,13 +214,4 @@ void move_on_board (char keypress, int value)
 
 		break;
 	}
-}
-
-void number_box ()
-{
-	int i, j;
-	print_tile (20, 120);
-
-	for (i = 10; i <= 30; i++)
-		write_pixel (i, 120, BLACK);
 }

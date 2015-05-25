@@ -11,6 +11,9 @@ CMSC 125 ST-2L AY 14-15
 #define TRUE 1
 #define FALSE 0
 
+#define ROWS 8
+#define COLS 8
+
 // global variables
 int i, j;
 
@@ -21,82 +24,44 @@ for visible array:
 2 - marked with flag
 */
 
-/*
-need pass by reference on every array object
-all arrays will be created in main
-*/
-
 // function prototypes
-void newGame(int board[8][8], int adjacents[8][8], int minesCount);
-void markFlag(int x, int y, int visible[8][8]);
-void click(int x, int y, int board[8][8], int visible[8][8]);
-void print_textboard ();
-void uncover (int x, int y, int board[8][8], int visible[8][8]);
-int checkWon(int board[8][8], int visible[8][8]);
+void markFlag(int x, int y, int visible[ROWS][COLS]);
+void click(int x, int y, int board[ROWS][COLS], int visible[ROWS][COLS]);
+void uncover (int x, int y, int board[ROWS][COLS], int visible[ROWS][COLS]);
+int checkWon(int board[ROWS][COLS], int visible[ROWS][COLS]);
+void new_game (int **board, int *mine_count);
 
-// initializes board
-void newGame(int board[8][8], int adjacents[8][8], int minesCount){
+void new_game (int **board, int *mine_count)
+{
+	int i, j;
+	//set board values to FALSE
+	for (i = 0; i < ROWS; i++)
+		for (j = 0; j < COLS; j++)
+			board[i][j] = FALSE;
 	
+	// seed rand
+	srand (time(NULL));
 	//fill board with mines
-	minesCount = rand()/5000 + 10;
+	*mine_count = rand() % 30 + 10;
 	
-	for(i = 0; i < minesCount; i++){
-		int x = rand()/4096;
-		int y = rand()/4096;
+	for(i = 0; i < *mine_count; i++)
+	{
+		int x = rand() % 8;
+		int y = rand() % 8;
 		
 		//while there is a mine in random number generated, change x and y
-		while(board[x][y] == TRUE){
-			x = rand()/4096;
-			y = rand()/4096;
+		while(board[x][y] == TRUE)
+		{
+			x = rand() % 8;
+			y = rand() % 8;
 		}
 		
 		board[x][y] = TRUE;
 	}
-	
-	//count adjacent mines for each tile	
-	for(i = 0; i < 8; i++){
-		for(j = 0; j < 8; j++){
-			//this tile is a mine
-			if(board[i][j] == TRUE)
-				continue;
-			
-			//up down
-			if(board[i][j+1] && j + 1 < 8){
-				adjacents[i][j] += 1;
-			}
-			if(board[i][j-1] && j - 1 > 0){
-				adjacents[i][j] += 1;
-			}
-			
-			//left right
-			if(board[i+1][j] && i + 1 < 8){
-				adjacents[i][j] += 1;
-			}
-			if(board[i-1][j] && i - 1 > 0){
-				adjacents[i][j] += 1;
-			}
-			
-			//upper left upper right
-			if(board[i-1][j+1] && j + 1 < 8 && i - 1 > 0){
-				adjacents[i][j] += 1;
-			}
-			if(board[i+1][j+1] && j + 1 < 8 && i + 1 < 8){
-				adjacents[i][j] += 1;
-			}
-			
-			//lower left lower right
-			if(board[i-1][j-1] && j - 1 > 8 && i - 1 > 0){
-				adjacents[i][j] += 1;
-			}
-			if(board[i+1][j-1] && j - 1 > 0 && i + 1 < 8){
-				adjacents[i][j] += 1;
-			}
-		}
-	}
 }
 
 // marks an area with a flag. works for invisible units only
-void markFlag(int x, int y, int visible[8][8]){
+void markFlag(int x, int y, int visible[ROWS][COLS]){
 	if(visible[x][y] == 0)
 		visible[x][y] == 2;
 	if(visible[x][y] == 2)
@@ -104,7 +69,7 @@ void markFlag(int x, int y, int visible[8][8]){
 }
 
 // similar to flip in GameInterface
-void click(int x, int y, int board[8][8], int visible[8][8]){
+void click(int x, int y, int board[COLS][ROWS], int visible[COLS][ROWS]){
 	if(board[x][y]){
 		//insert game over code here
 		return;
@@ -113,7 +78,7 @@ void click(int x, int y, int board[8][8], int visible[8][8]){
 }
 
 // reveals the content of selected tile
-void uncover(int x, int y, int board[8][8], int visible[8][8]){
+void uncover(int x, int y, int board[ROWS][COLS], int visible[ROWS][COLS]){
 	if(board[x][y]){
 		return;
 	}
@@ -147,7 +112,7 @@ void uncover(int x, int y, int board[8][8], int visible[8][8]){
 }
 
 // winning condition
-int checkWon(int board[8][8], int visible[8][8]){
+int checkWon(int board[ROWS][COLS], int visible[ROWS][COLS]){
 	for(i = 0; i < 8; i++){
 		for(j = 0; j < 8; j++){
 			if(visible[i][j] == 0 && !board[i][j])
