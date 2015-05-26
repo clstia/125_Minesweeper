@@ -25,11 +25,23 @@ for visible array:
 */
 
 // function prototypes
-void markFlag(int x, int y, int visible[ROWS][COLS]);
-void click(int x, int y, int board[ROWS][COLS], int visible[ROWS][COLS]);
-void uncover (int x, int y, int board[ROWS][COLS], int visible[ROWS][COLS]);
-int checkWon(int board[ROWS][COLS], int visible[ROWS][COLS]);
+void click(int x, int y, int **board, int **visible);
+void uncover (int x, int y, int **board, int **visible);
+int checkWon(int **board, int **visible);
+
 void new_game (int **board, int *mine_count);
+void init_visible (int **visible);
+void mark_flag(int x, int y, int **visible);
+void mini_flip (int x, int y, int **visible);
+
+void init_visible (int **visible)
+{
+	int i, j;
+
+	for (i = 0; i < ROWS; i++)
+		for (j = 0; j < COLS; j++)
+			visible[i][j] = 0;
+}
 
 void new_game (int **board, int *mine_count)
 {
@@ -61,27 +73,36 @@ void new_game (int **board, int *mine_count)
 }
 
 // marks an area with a flag. works for invisible units only
-void markFlag(int x, int y, int visible[ROWS][COLS]){
+void mark_flag(int x, int y, int **visible)
+{
 	if(visible[x][y] == 0)
-		visible[x][y] == 2;
+		visible[x][y] = 2;
 	if(visible[x][y] == 2)
-		visible[x][y] == 0;
+		visible[x][y] = 0;
 }
 
 // similar to flip in GameInterface
-void click(int x, int y, int board[COLS][ROWS], int visible[COLS][ROWS]){
-	if(board[x][y]){
+void click(int x, int y, int **board, int **visible)
+{
+	if(board[x][y])
+	{
 		//insert game over code here
 		return;
 	}
-	uncover(x, y, board, visible);
+	else
+	{
+		visible[i][j] = 1;
+	}
+	//uncover(x, y, board, visible);
 }
 
 // reveals the content of selected tile
-void uncover(int x, int y, int board[ROWS][COLS], int visible[ROWS][COLS]){
-	if(board[x][y]){
+void uncover(int x, int y, int **board, int **visible){
+	if(board[x][y])
+	{
 		return;
 	}
+	
 	visible[x][y] = 1;
 	
 	//uncover left
@@ -112,9 +133,13 @@ void uncover(int x, int y, int board[ROWS][COLS], int visible[ROWS][COLS]){
 }
 
 // winning condition
-int checkWon(int board[ROWS][COLS], int visible[ROWS][COLS]){
-	for(i = 0; i < 8; i++){
-		for(j = 0; j < 8; j++){
+int checkWon(int **board, int **visible)
+{
+	int i, j;
+	for(i = 0; i < 8; i++)
+	{
+		for(j = 0; j < 8; j++)
+		{
 			if(visible[i][j] == 0 && !board[i][j])
 				return FALSE;
 		}

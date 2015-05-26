@@ -10,6 +10,7 @@
 #define down_key 's'
 #define left_key 'a'
 #define right_key 'd'
+#define flip_key 'o'
 
 // get value at board[x][y]
 void move_on_array (char keypress, int **board, int *board_x, int *board_y, int *value)
@@ -59,6 +60,23 @@ void printArray (int **board)
 	}
 }
 
+void init_visible (int **visible)
+{
+	int i, j;
+
+	for (i = 0; i < ROWS; i++)
+		for (j = 0; j < COLS; j++)
+			visible[i][j] = 0;
+}
+
+void flip (int **visible, int **board, int x, int y)
+{
+	if (visible[x][y] == 0 && board[x][y] != 1)
+	{
+		visible[x][y] = 1;
+	}
+}
+
 void new_game (int **board, int *mine_count)
 {
 	int i, j;
@@ -67,11 +85,6 @@ void new_game (int **board, int *mine_count)
 	for (i = 0; i < ROWS; i++)
 		for (j = 0; j < COLS; j++)
 			board[i][j] = FALSE;
-	
-	//set adjacents values
-	for (i = 0; i < ROWS; i++)
-		for (j = 0; j < COLS; j++)
-			adjacents[i][j] = 0;
 
 	srand (time(NULL));
 	//fill board with mines
@@ -96,52 +109,45 @@ void new_game (int **board, int *mine_count)
 int main ()
 {
 	int mine_count = 0, i, j;
-	int **board, **adjacents;
+	int **board, **visible, board_x = 0, board_y = 0, value = 0;
+	char keypress;
 
 	board = (int**) malloc (sizeof(int*)*ROWS);
-	adjacents = (int**) malloc (sizeof(int*)*ROWS);
+	visible = (int**) malloc (sizeof(int*)*ROWS);
 	
 	for (i = 0; i < ROWS; i++)
 	{
 		board[i] = (int*) malloc (sizeof(int)*COLS);
-		adjacents[i] = (int*) malloc (sizeof(int)*COLS);
-	}
-
-	for (i = 0; i < ROWS; i++)
-		for (j = 0; j < COLS; j++)
-			board[i][j] = adjacents[i][j] = 0;
-	
-	new_game (board, adjacents, &mine_count);
-
-	printf ("minefield, mine_count %d\n", mine_count);
-
-	for (i = 0; i < ROWS; i++)
-	{
-		for (j = 0; j < COLS; j++)
-		{
-			printf ("%d\t", board[i][j]);
-		}
-		printf ("\n");
+		visible[i] = (int*) malloc (sizeof(int)*COLS);
 	}
 	
-	printf ("adjacents\n");
-
-	for (i = 0; i < ROWS; i++)
+	new_game (board, &mine_count);
+	while (keypress != 'q')
 	{
-		for (j = 0; j < COLS; j++)
+		printf ("minefield, mine_count %d\n", mine_count);
+		printArray (board);
+	
+		printf ("visible\n");
+		printArray (visible);
+
+		printf ("\nEnter move: ");
+		scanf (" %c", &keypress);
+
+		if (keypress == flip_key)
 		{
-			printf ("%d\t", adjacents[i][j]);
+			flip (visible, board, board_x, board_y);
 		}
-		printf ("\n");
+
+		move_on_array (keypress, board, &board_x, &board_y, &value);
 	}
 
 	for (i = 0; i < ROWS; i++)
 	{
 		free (board[i]);
-		free (adjacents[i]);
+		free (visible[i]);
 	}
 
-	free (adjacents);
+	free (visible);
 	free (board);
 	
 	return 0;

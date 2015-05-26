@@ -24,14 +24,13 @@ CMSC 125 ST-2L AY 14-15
 void show_board ();
 void show_main ();
 void erase ();
-void print_board (int **board, int board_x, int board_y);
-void print_tile (int x, int y, int **board, int board_x, int board_y);
-void print_inner_tile (int x, int y, int **board, int board_x, int board_y);
+void print_board ();
+void print_tile (int x, int y);
+void print_inner_tile (int x, int y);
 void select_tile (int x, int y);
 void reset ();
-void flip (int x, int y, int value);
-void move_on_board (char keypress, int value, int **board, int board_x, int board_y);
-void number_box ();
+void flip (int x, int y, int board_value);
+void move_on_board (char keypress, int board_value, int **visible, int board_x, int board_y);
 
 // global variables
 int new_x, new_y, old_x = 100, old_y = 0, limit_left = 100, limit_upper = 0, limit_lower = 154, limit_right = 275;
@@ -45,27 +44,51 @@ void show_board ()
 	write_text ("Left - A", 5, 57, WHITE, 0);
 	write_text ("Right - D", 5, 67, WHITE, 0);
 	write_text ("Reset - R", 5, 77, WHITE, 0);
-	write_text ("Exit - X", 5, 87, WHITE, 0);
+	write_text ("Quit - Q", 5, 87, WHITE, 0);
 	write_text ("Flip - O", 5, 107, WHITE, 0);
 
 }
 
-// opens a tile.
-void flip (int x, int y, int value)
+void moving_on_board (int x, int y, int **visible, int board_x, int board_y)
 {
 	int i, j;
 
-	if (value)
+	if (visible[board_x][board_y] == 0)
+	{
+		// if tile is not yet flipped
+		for (i = x+2; i <= (x+18); i++)
+		for (j = 12+y; j <= (y+23); j++)
+			write_pixel (i, j, WHITE);
+	}
+	else if (visible[board_x][board_y] == 1)
+	{
+		// if the tile is already flipped
+		for (i = x+2; i <= (x+18); i++)
+		for (j = 12+y; j <= (y+23); j++)
+			write_pixel (i, j, YELLOW);
+	}
+	else //visible[i][j] == 2
+	{
+		// the tile is marked as a flag
+	}
+}
+
+// opens a tile.
+void flip (int x, int y, int board_value)
+{
+	int i, j;
+
+	if (!board_value)
 	{
 		for (i = x+2; i <= (x+18); i++)
 			for (j = 12+y; j <= (y+23); j++)
-				write_pixel (i, j, RED);	
+				write_pixel (i, j, WHITE);	
 	}
 	else
 	{
 		for (i = x+2; i <= (x+18); i++)
 			for (j = 12+y; j <= (y+23); j++)
-				write_pixel (i, j, YELLOW);	
+				write_pixel (i, j, RED);	
 	}
 }
 
@@ -85,11 +108,11 @@ void print_inner_tile (int x, int y)
 	// inner tile
 	for (i = x+2; i <= (x+18); i++)
 		for (j = 12+y; j <= (y+23); j++)
-			write_pixel (i, j, LIGHTCYAN);
+			write_pixel (i, j, GRAY);
 }
 
 // prints an array of 8x8 tiles
-void print_tile (int x, int y\)
+void print_tile (int x, int y)
 {
 	int i, j;
 
@@ -140,7 +163,7 @@ void erase ()
 }
 
 // shows the current position of the marker
-void move_on_board (char keypress, int value, int **board, int board_x, int board_y)
+void move_on_board (char keypress, int board_value, int **visible, int board_x, int board_y)
 {
 	switch (keypress)
 	{
@@ -153,7 +176,7 @@ void move_on_board (char keypress, int value, int **board, int board_x, int boar
 			}
 			else
 			{
-				print_inner_tile (old_x, old_y);
+				moving_on_board (old_x, old_y, visible, board_x, board_y);
 				select_tile (old_x, new_y);
 				old_y = new_y;
 			}
@@ -169,7 +192,7 @@ void move_on_board (char keypress, int value, int **board, int board_x, int boar
 			}
 			else
 			{
-				print_inner_tile (old_x, old_y);
+				moving_on_board (old_x, old_y, visible, board_x, board_y);
 				select_tile (old_x, new_y);
 				old_y = new_y;
 			}
@@ -185,7 +208,7 @@ void move_on_board (char keypress, int value, int **board, int board_x, int boar
 			}
 			else
 			{
-				print_inner_tile (old_x, old_y);
+				moving_on_board (old_x, old_y, visible, board_x, board_y);
 				select_tile (new_x, old_y);
 				old_x = new_x;
 			}
@@ -200,18 +223,14 @@ void move_on_board (char keypress, int value, int **board, int board_x, int boar
 			}
 			else
 			{
-				print_inner_tile (old_x, old_y);
+				moving_on_board (old_x, old_y, visible, board_x, board_y);
 				select_tile (new_x, old_y);
 				old_x = new_x;
 			}
 		break;
 
 		case flip_key:
-			
-		break;
-
-		case reset_key:
-
+			flip (old_x, old_y, board_value);		
 		break;
 	}
 }
